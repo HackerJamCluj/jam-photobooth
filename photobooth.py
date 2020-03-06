@@ -4,6 +4,9 @@ from gpiozero import Button
 from twython import Twython
 from time import sleep
 import logging
+import os
+from time import gmtime, strftime
+from config import folder_id
 
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
@@ -64,6 +67,9 @@ def capture_photos(n):
     Capture n photos in sequence and return a list of file paths
     """
     photos = []
+
+    folder_name = strftime("/home/pi/Pictures/photo-%d-%m %H:%M:%S", gmtime())
+
     for pic in range(n):
         camera.annotate_text = text['photo number'].format(pic + 1, n)
         sleep(1)
@@ -75,15 +81,35 @@ def capture_photos(n):
         sleep(1)
         countdown(3)
         logger.info("capturing photo")
-        photo = camera.capture()
-        logger.info("captured photo: {}".format(photo))
-        photos.append(photo)
+        picture_path = folder_name + '/image' + str(pic) + '.png'
+        camera.capture(picture_path)
+        logger.info("captured photo: {}".format(pic))
+        photos.append(picture_path)
     return photos
 
 
-def upload_photos(photos):
-    pass
+def display_qr(link):
+    img = qrcode.make(link)
+    img.save('qr.png')
 
+
+def upload_photos(photos):
+    folder_name = photos[0].split('/')[:-1]
+
+    folder = drive.CreateFile({'title': folder_name,
+                               "parents": [{"id": folder_id}],
+                               "mimeType": "application/vnd.google-apps.folder"})
+    folder.Upload()
+
+    for image in photos:
+        file = drive.CreateFile({'parents': [{'id': folder['id']}],
+                                 'title': image})
+        file.SetContentFile(folder_name+'/'+image)
+        file.Upload()
+
+    link = folder['alternateLink']
+
+    return link
 
 
 button.when_held = quit
@@ -108,9 +134,10 @@ while True:
             logger.info("button not pressed - tweeting")
             camera.annotate_text = text['uploading']
             try:
-                uploaded_photos = upload_photos(photos)
+                link = upload_photos(photos)
 
-                tweet_photos(text['tweet'], uploaded_photos)
+                display_qr(link)
+
                 sleep(1)
             except:
                 logger.info("failed to upload")

@@ -1,6 +1,5 @@
 from PIL import Image
 from picamera import PiCamera
-from time import gmtime, strftime
 import os
 
 overlay_path = os.path.join(os.path.dirname(__file__), 'bbw.png')
@@ -16,13 +15,6 @@ def _pad(resolution, width=32, height=16):
         ((resolution[1] + (height - 1)) // height) * height,
     )
 
-def _gen_filename():
-    """
-    Generates a filename with a timestamp
-    """
-    filename = strftime("/home/pi/Pictures/photo-%d-%m %H:%M:%S.png", gmtime())
-    return filename
-
 class JamPiCamera(PiCamera):
     def start_preview(self):
         pad = Image.new('RGB', _pad(self.resolution))
@@ -30,10 +22,8 @@ class JamPiCamera(PiCamera):
         self.add_overlay(pad.tobytes(), alpha=50, layer=3)
         super(JamPiCamera, self).start_preview()
 
-    def capture(self):
-        output = _gen_filename()
-        super(JamPiCamera, self).capture(output)
-        output_img = Image.open(output).convert('RGBA')
+    def capture(self, picture_path):
+        super(JamPiCamera, self).capture(picture_path)
+        output_img = Image.open(picture_path).convert('RGBA')
         new_output = Image.alpha_composite(output_img, overlay)
-        new_output.save(output)
-        return output
+        new_output.save(picture_path)
