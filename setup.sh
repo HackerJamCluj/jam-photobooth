@@ -8,6 +8,6 @@ sudo pip3 install pydrive
 sudo pip3 install qrcode
 cd ~
 [ -d Pictures ] || mkdir Pictures
-git clone https://github.com/raspberrypifoundation/jam-photobooth
+git clone https://github.com/HackerJamCluj/jam-photobooth
 crontab -l | { cat; echo "@reboot python3 /home/pi/jam-photobooth/photobooth.py &"; } | crontab -
 sudo reboot
