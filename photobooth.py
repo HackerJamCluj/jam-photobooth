@@ -97,7 +97,7 @@ def display_qr(link):
 
 
 def upload_photos(photos):
-    folder_name = photos[0].split('/')[:-1]
+    folder_name = '/'.join(photos[0].split('/')[:-1])
 
     folder = drive.CreateFile({'title': folder_name,
                                "parents": [{"id": folder_id}],
