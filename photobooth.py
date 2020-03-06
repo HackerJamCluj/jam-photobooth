@@ -107,7 +107,7 @@ def upload_photos(photos):
     for image in photos:
         file = drive.CreateFile({'parents': [{'id': folder['id']}],
                                  'title': image})
-        file.SetContentFile(folder_name+'/'+image)
+        file.SetContentFile(image)
         file.Upload()
 
     link = folder['alternateLink']
