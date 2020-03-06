@@ -19,6 +19,7 @@ logger.info("starting")
 text = get_text(language='en')
 
 camera = JamPiCamera()
+camera.rotation = 180
 button = Button(14, hold_time=5)
 
 camera.resolution = (1024, 768)
