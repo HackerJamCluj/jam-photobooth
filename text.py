@@ -9,6 +9,9 @@ text_en = {
     'ready': "Ready!\n" "Press the button to start...",
     'failed tweet': "Failed to tweet :(",
     'not tweeting': "Not tweeting",
+    'uploading to Drive with cancel': "Uploading...\n" "Press the button to cancel",
+    'not uploading to Drive': 'Not uploading',
+    'uploading': 'Uploading...'
 }
 
 # German - Deutsche
