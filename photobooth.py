@@ -70,6 +70,8 @@ def capture_photos(n):
 
     folder_name = strftime("/home/pi/Pictures/photo-%d-%m %H:%M:%S", gmtime())
 
+    os.mkdir(folder_name)
+
     for pic in range(n):
         camera.annotate_text = text['photo number'].format(pic + 1, n)
         sleep(1)
